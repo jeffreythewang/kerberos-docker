@@ -13,8 +13,8 @@ COPY ./krb-conf/server/kdc.conf /etc/krb5kdc/kdc.conf
 COPY ./krb-conf/server/kadm5.acl /etc/krb5kdc/kadm5.acl
 COPY ./krb-conf/client/krb5.conf /etc/krb5.conf
 
-# ssh client
-RUN apt-get install -y openssh-client
+# supervisord
+COPY ./supervisord.conf /etc/supervisord.conf
 
-# run command
-CMD ["python", "-m", "SimpleHTTPServer", "5002"]
+# when container is starting
+CMD ["/usr/local/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

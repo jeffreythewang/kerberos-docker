@@ -7,6 +7,7 @@ os: linux
 branches:
   only:
     - master
+    - develop
 
 notifications:
   email:
@@ -21,10 +22,13 @@ services:
 
 install:
   - ./.ci/install.sh
+  - make install
 
 script:
   - make test
 
 after_script:
+  - cat /tmp/test.log
+  - ls -lR
   - ./.ci/check-version.sh
   - yes | sed s/y/Y/ | make clean

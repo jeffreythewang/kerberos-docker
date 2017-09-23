@@ -16,6 +16,7 @@ Use an **operating system compatible with docker**.
 Install **GNU Make** (if not already available).  
 Install **GNU Bash** (if not already available).  
 Install **Python 3** (if not already available, with `pip` and `virtualenv`).  
+Install **Java 8 and Maven 3** (if not already available).  
 Install **docker-ce** and **docker-compose** (without `sudo` for running docker command and with `overlay2` driver).  
 
 To check compatible version, see `./.ci/check-version.sh` traces on Travis CI web interface:  
@@ -28,9 +29,9 @@ To run tests, install **Bats**, see `./.ci/install.sh`.
 
 After installation, there are 3 docker containers with python web server on each one to check if it turns:
 
-- `krb5-machine`: see http://localhost:5001
-- `krb5-kdc-server`: see http://localhost:5002
-- `krb5-service`: see http://localhost:5003
+- `krb5-machine`: see http://10.5.0.1:5001
+- `krb5-kdc-server`: see http://10.5.0.2:5002
+- `krb5-service`: see http://10.5.0.3:5003
 
 The goal is to connect from `krb5-machine` to `krb5-service` with ssh and Kerberos authentication (using GSSAPIAuthentication).
 
@@ -70,7 +71,8 @@ To delete `ubuntu:16.04` and `minimal-ubuntu:latest` docker images do `docker rm
 * Use that on CentOS, Arch Linux ... for container or host machine (not only Ubuntu)
 * Add LDAP (or not) for Kerberos architecture
 * Add other connector and service (postgresql, mongodb, nfs, hadoop) only OpenSSH for the moment
-* Add Java or C code Application to connect to kerberos
+* Add Java, python or C using GSS API ... to connect with Kerberos authentication
+* Run multiple services in a container: naive solution or supervisord.
 
 
 ## Test and Continous Integration
@@ -142,6 +144,36 @@ your routage table with `route -n`, test free IP addresses with
 `ping -c 1 -w 2 <host>`, and check request paths with `traceroute <host>`.
 
 If the issue persists, you can do `make clean` or `docker network rm example.com`.
+
+**Working on your computer (host machine) for debugging code**
+
+Modify your `/etc/hosts` to resolve bidirectionally IP addresses with DNS of
+the kerberos cluster:
+
+~~~
+# /etc/hosts
+# ...
+
+# Kerberos cluster
+10.5.0.1	krb5-machine.example.com krb5-machine
+10.5.0.2	krb5-kdc-server.example.com krb5-kdc-server
+10.5.0.3	krb5-service.example.com krb5-service
+
+# ...
+~~~
+
+You can `ping krb5-kdc-server|10.5.0.2` Kerberos KDC server, and check if
+Kerberos server port is opened: `nmap -A 10.5.0.2/32 -p 88` (or if SSH
+server port : `nmap -A 10.5.0.3/32 -p 22`).
+
+Now you can debug code and do `kinit bob` on host machine directly.
+
+The order of `entries` and `names` is important in `/etc/hosts`.
+To resolve name from IP address, the resolver takes the first one (horizontally) if mutiple names 
+are possible; and to resolve IP address from name , the resolver takes the first entry (vertically)
+if multiple IP addresses are possible/ You can use `resolveip <IP|name>`, `getent hosts <IP|name>`
+or just take a look `/etc/hosts`.
+
 
 ## References
 

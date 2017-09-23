@@ -2,12 +2,17 @@
 #
 # generate_docker_compose.py
 #
+# Generate configuration from Jinja template.
+#
 # usage: python3 ./script/generate_docker_compose.py
 # (call only from root repository)
 #
-# Generate configuration from Jinja template.
+# Generate docker-compose.yml configuration from:
+# - .env.values (shell environment)
+# - docker-compose.yml.template (Jinja template)
 
 
+import sys
 import os
 import configparser
 
@@ -81,7 +86,13 @@ def render(template_path, context, generate_file=True, comment="#"):
 
 if __name__ == "__main__":
     print("=== generate docker compose configuration ===")
-    context = read_context(".env")
+    if not os.path.isfile(".env.values"):
+        print("ERROR: .env.values doesn't exist!", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.isfile("docker-compose.yml.template"):
+        print("ERROR: docker-compose.yml.template doesn't exist!", file=sys.stderr)
+        sys.exit(1)
+    context = read_context(".env.values")
     result = render("docker-compose.yml.template", context)
     print("...OK")
 
