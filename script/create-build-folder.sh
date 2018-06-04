@@ -6,6 +6,8 @@
 #
 # Build folder containing configuration files used to build docker container
 
+set -e
+
 cd "$(dirname "$0")"
 cd ..
 
@@ -25,8 +27,8 @@ relative_path_files=$(find . -type f ! -name "*.template")
 cd ..
 echo "working directory: ${PWD}"
 mkdir -pv ".build-${suffix_realm}/"
-cp -fv .env.values ".build-${suffix_realm}/"
-cp -fv docker-compose.yml ".build-${suffix_realm}/"
+mv -fv .env.values ".build-${suffix_realm}/"
+mv -fv docker-compose.yml ".build-${suffix_realm}/"
 ./script/switch-project.sh "${suffix_realm}"
 
 cd ".build-${suffix_realm}/"
