@@ -18,5 +18,9 @@ COPY ./ssh-conf/client/ssh_config /etc/ssh/ssh_config
 # supervisord
 COPY ./supervisord.conf /etc/supervisord.conf
 
+# jdbc client
+RUN wget -P /root/jdbc-presto/ https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.196/presto-jdbc-0.196.jar
+COPY ./jdbc-presto/KerberosPresto.java /root/jdbc-presto/KerberosPresto.java
+
 # when container is starting
 CMD ["/usr/local/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
