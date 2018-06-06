@@ -6,8 +6,6 @@
 #
 # Build folder containing configuration files used to build docker container
 
-set -e
-
 cd "$(dirname "$0")"
 cd ..
 
