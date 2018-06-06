@@ -7,8 +7,6 @@
 #
 # Build virtual python environment
 
-set -e
-
 \virtualenv -p "$(\which \python3)" ./env/
 \source ./env/bin/activate
 \pip3 install --upgrade pip
