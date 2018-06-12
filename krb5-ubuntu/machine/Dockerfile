@@ -22,5 +22,10 @@ COPY ./supervisord.conf /etc/supervisord.conf
 RUN wget -P /root/jdbc-presto/ https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.196/presto-jdbc-0.196.jar
 COPY ./jdbc-presto/KerberosPresto.java /root/jdbc-presto/KerberosPresto.java
 
+# python client
+RUN apt-get install -y gcc python-dev libkrb5-dev
+RUN pip install pywinrm[kerberos] requests
+COPY ./python/kerberos_connect.py /root/python/kerberos_connect.py
+
 # when container is starting
 CMD ["/usr/local/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
